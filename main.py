@@ -1,3 +1,4 @@
+import argparse
 import os
 
 from typing import NamedTuple
@@ -76,7 +77,12 @@ def download_image(url, image_name, folder='images/'):
 
 
 if __name__ == '__main__':
-    for book_id in range(1, 11):
+    parser = argparse.ArgumentParser(description='Парсер выводит информацию о книгах, их картинки и качает их.')
+    parser.add_argument('start_id', help='ID книги, с которой начать.', default=1, type=int)
+    parser.add_argument('end_id', help='ID книги, на которой остановиться.', default=10, type=int)
+    args = parser.parse_args()
+
+    for book_id in range(args.start_id, args.end_id + 1):
         book_id_url = f'https://tululu.org/txt.php?id={book_id}'
         response = requests.get(book_id_url)
         response.raise_for_status()
@@ -94,6 +100,7 @@ if __name__ == '__main__':
 
         print(f'Заголовок: {book_info.title}')
         print(f'Жанр: {book_info.genres}')
+        print(f'Автор: {book_info.author}')
 
         download_txt(book_url, book_name)
         download_image(book_info.book_image_url, image_name)
