@@ -78,8 +78,8 @@ def download_image(url, image_name, folder='images/'):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Парсер выводит информацию о книгах, их картинки и качает их.')
-    parser.add_argument('start_id', help='ID книги, с которой начать.', default=1, type=int)
-    parser.add_argument('end_id', help='ID книги, на которой остановиться.', default=10, type=int)
+    parser.add_argument('--start_id', type=int, default=1)
+    parser.add_argument('--end_id', type=int, default=10)
     args = parser.parse_args()
 
     for book_id in range(args.start_id, args.end_id + 1):
