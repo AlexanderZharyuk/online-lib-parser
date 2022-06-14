@@ -23,7 +23,7 @@ class BookInfo(NamedTuple):
     genres: list
 
 
-def get_book_information(url: str) -> BookInfo:
+def parse_book_page(url: str) -> BookInfo:
     response = requests.get(url)
     response.raise_for_status()
 
@@ -87,7 +87,7 @@ if __name__ == '__main__':
             continue
 
         book_url = f'https://tululu.org/b{book_id}'
-        book_info = get_book_information(book_url)
+        book_info = parse_book_page(book_url)
         book_name = f'{book_id}. {book_info.title}'
         parsed_image_url = urlparse(book_info.book_image_url)
         image_name = parsed_image_url.path.split('/')[-1]
