@@ -1,5 +1,4 @@
 import os
-import urllib.parse
 
 from typing import NamedTuple
 from urllib.parse import urljoin, urlparse
@@ -20,6 +19,7 @@ class BookInfo(NamedTuple):
     title: str
     author: str
     book_image_url: str
+    comments: str
 
 
 def get_book_information(url: str) -> BookInfo:
@@ -35,7 +35,14 @@ def get_book_information(url: str) -> BookInfo:
     domain = f'{parsed_url.scheme}://{parsed_url.netloc}'
     image_url = urljoin(domain, book_image)
 
-    return BookInfo(title=book_title, author=book_author, book_image_url=image_url)
+    comments = ''
+    if soup.find('div', class_='texts'):
+        all_comments_html = [comment.find('span', class_="black")
+                             for comment in soup.find_all('div', class_='texts')]
+        for comment in all_comments_html:
+            comments += comment.text
+
+    return BookInfo(title=book_title, author=book_author, book_image_url=image_url, comments=comments)
 
 
 def download_txt(url, filename, folder='books/'):
@@ -79,5 +86,6 @@ if __name__ == '__main__':
         book_name = f'{book_id}. {book_info.title}'
         parsed_image_url = urlparse(book_info.book_image_url)
         image_name = parsed_image_url.path.split('/')[-1]
+
         download_txt(book_url, book_name)
         download_image(book_info.book_image_url, image_name)
