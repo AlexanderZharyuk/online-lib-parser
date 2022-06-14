@@ -20,6 +20,7 @@ class BookInfo(NamedTuple):
     author: str
     book_image_url: str
     comments: str
+    genres: list
 
 
 def get_book_information(url: str) -> BookInfo:
@@ -42,7 +43,11 @@ def get_book_information(url: str) -> BookInfo:
         for comment in all_comments_html:
             comments += comment.text
 
-    return BookInfo(title=book_title, author=book_author, book_image_url=image_url, comments=comments)
+    genres = []
+    for genre in soup.find('span', class_='d_book').find_all('a'):
+        genres.append(genre.text)
+
+    return BookInfo(title=book_title, author=book_author, book_image_url=image_url, comments=comments, genres=genres)
 
 
 def download_txt(url, filename, folder='books/'):
@@ -86,6 +91,9 @@ if __name__ == '__main__':
         book_name = f'{book_id}. {book_info.title}'
         parsed_image_url = urlparse(book_info.book_image_url)
         image_name = parsed_image_url.path.split('/')[-1]
+
+        print(f'Заголовок: {book_info.title}')
+        print(f'Жанр: {book_info.genres}')
 
         download_txt(book_url, book_name)
         download_image(book_info.book_image_url, image_name)
