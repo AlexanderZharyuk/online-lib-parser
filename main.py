@@ -26,17 +26,13 @@ class BookInfo(NamedTuple):
     genres: list
 
 
-def parse_book_page(url: str) -> BookInfo:
-    response = requests.get(url)
-    response.raise_for_status()
-
-    soup = BeautifulSoup(response.text, 'lxml')
+def parse_book_page(page_html: str) -> BookInfo:
+    soup = BeautifulSoup(page_html, 'lxml')
     page_info = soup.find('body').find('h1').text.replace(u'\xa0', '')
     book_title, book_author = [text.strip() for text in page_info.split('::')]
     book_image = soup.find('div', class_='bookimage').find('img')['src']
 
-    parsed_url = urlparse(url)
-    domain = f'{parsed_url.scheme}://{parsed_url.netloc}'
+    domain = 'https://tululu.org'
     image_url = urljoin(domain, book_image)
 
     comments = ''
@@ -95,7 +91,10 @@ if __name__ == '__main__':
             check_for_redirect(response)
 
             book_url = f'https://tululu.org/b{book_id}'
-            book_info = parse_book_page(book_url)
+            response = requests.get(book_url)
+            response.raise_for_status()
+
+            book_info = parse_book_page(response.text)
             book_name = f'{book_id}. {book_info.title}'
             parsed_image_url = urlparse(book_info.book_image_url)
             image_name = parsed_image_url.path.split('/')[-1]
