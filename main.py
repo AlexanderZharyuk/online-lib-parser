@@ -56,7 +56,7 @@ def download_txt(url, filename, folder='books/'):
     file_path = os.path.join(folder, reformed_filename)
 
     with open(file_path, 'wb') as book:
-        book.write(response.content)
+        book.write(response.text.encode("utf-8"))
 
     return file_path
 
@@ -86,6 +86,7 @@ if __name__ == '__main__':
         book_id_url = f'https://tululu.org/txt.php'
         try:
             response = requests.get(book_id_url, params=params)
+            book_full_url = response.url
             response.raise_for_status()
             check_for_redirect(response)
 
@@ -99,7 +100,7 @@ if __name__ == '__main__':
             parsed_image_url = urlparse(book.book_image_url)
             image_name = parsed_image_url.path.split('/')[-1]
 
-            download_txt(book_url, book_name)
+            download_txt(book_full_url, book_name)
             download_image(book.book_image_url, image_name)
         except ConnectionError:
             logging.error('ConnectionError. Going sleep 1 min.')
