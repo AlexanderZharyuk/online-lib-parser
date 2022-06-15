@@ -83,8 +83,11 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     for book_id in range(args.start_id, args.end_id + 1):
-        book_id_url = f'https://tululu.org/txt.php?id={book_id}'
-        response = requests.get(book_id_url)
+        params = {
+            'id': book_id
+        }
+        book_id_url = f'https://tululu.org/txt.php'
+        response = requests.get(book_id_url, params=params)
         response.raise_for_status()
 
         try:
