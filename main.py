@@ -89,7 +89,7 @@ if __name__ == '__main__':
             response.raise_for_status()
             check_for_redirect(response)
 
-            book_url = f'https://tululu.org/b{book_id}'
+            book_url = f'https://tululu.org/b{book_id}/'
             response = requests.get(book_url)
             response.raise_for_status()
             check_for_redirect(response)
