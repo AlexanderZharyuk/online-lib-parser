@@ -37,16 +37,13 @@ def parse_book_page(page_html: str) -> BookInfo:
 
     comments = ''
     if soup.find('div', class_='texts'):
-        all_comments_html = [comment.find('span', class_="black")
-                             for comment in soup.find_all('div', class_='texts')]
-        for comment in all_comments_html:
-            comments += comment.text
+        comments_html = soup.find_all('div', class_='texts')
+        comments = [comment.find('span', class_="black").text for comment in comments_html]
 
-    genres = []
-    for genre in soup.find('span', class_='d_book').find_all('a'):
-        genres.append(genre.text)
+    genres = [genre.text for genre in soup.find('span', class_='d_book').find_all('a')]
 
-    return BookInfo(title=book_title, author=book_author, book_image_url=image_url, comments=comments, genres=genres)
+    return BookInfo(title=book_title, author=book_author, book_image_url=image_url,
+                    comments='\n'.join(comments), genres=genres)
 
 
 def download_txt(url, filename, folder='books/'):
@@ -112,3 +109,4 @@ if __name__ == '__main__':
         print(f'Заголовок: {book_info.title}')
         print(f'Жанр: {book_info.genres}')
         print(f'Автор: {book_info.author}')
+        print(f'Комментарии: {book_info.comments}')
