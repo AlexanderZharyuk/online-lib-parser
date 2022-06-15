@@ -82,7 +82,6 @@ if __name__ == '__main__':
     parser.add_argument('--start_id', type=int, default=1)
     parser.add_argument('--end_id', type=int, default=10)
     args = parser.parse_args()
-    connection_tries = 0
 
     for book_id in range(args.start_id, args.end_id + 1):
         params = {
@@ -102,16 +101,12 @@ if __name__ == '__main__':
 
             download_txt(book_url, book_name)
             download_image(book_info.book_image_url, image_name)
+        except ConnectionError:
+            print('ConnectionError. Going sleep 1 min.')
+            time.sleep(60)
+            continue
         except HTTPError:
             print('HTTPError')
-            continue
-        except ConnectionError:
-            connection_tries += 1
-
-            if connection_tries == 5:
-                print('ConnectionError. Going sleep 1 min.')
-                time.sleep(60)
-                connection_tries = 0
             continue
 
         print(f'Заголовок: {book_info.title}')
