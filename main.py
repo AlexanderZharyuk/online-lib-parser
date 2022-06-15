@@ -91,13 +91,13 @@ if __name__ == '__main__':
             response = requests.get(book_url)
             response.raise_for_status()
 
-            book_info = parse_book_page(response.text)
-            book_name = f'{book_id}. {book_info.title}'
-            parsed_image_url = urlparse(book_info.book_image_url)
+            book = parse_book_page(response.text)
+            book_name = f'{book_id}. {book.title}'
+            parsed_image_url = urlparse(book.book_image_url)
             image_name = parsed_image_url.path.split('/')[-1]
 
             download_txt(book_url, book_name)
-            download_image(book_info.book_image_url, image_name)
+            download_image(book.book_image_url, image_name)
         except ConnectionError:
             logging.error('ConnectionError. Going sleep 1 min.')
             time.sleep(60)
@@ -106,7 +106,6 @@ if __name__ == '__main__':
             logging.error('HTTPError. Maybe book id not find.')
             continue
 
-        print(f'Заголовок: {book_info.title}')
-        print(f'Жанр: {book_info.genres}')
-        print(f'Автор: {book_info.author}')
-        print(f'Комментарии: {book_info.comments}')
+        print(f'Заголовок: {book.title}')
+        print(f'Жанр: {book.genres}')
+        print(f'Автор: {book.author}')
