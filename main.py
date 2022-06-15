@@ -1,5 +1,6 @@
 import argparse
 import os
+import time
 
 from typing import NamedTuple
 from urllib.parse import urljoin, urlparse
@@ -8,7 +9,7 @@ import requests
 
 from bs4 import BeautifulSoup
 from pathvalidate import sanitize_filename
-from requests.exceptions import HTTPError
+from requests.exceptions import HTTPError, ConnectionError
 
 
 def check_for_redirect(response):
@@ -81,29 +82,38 @@ if __name__ == '__main__':
     parser.add_argument('--start_id', type=int, default=1)
     parser.add_argument('--end_id', type=int, default=10)
     args = parser.parse_args()
+    connection_tries = 0
 
     for book_id in range(args.start_id, args.end_id + 1):
         params = {
             'id': book_id
         }
         book_id_url = f'https://tululu.org/txt.php'
-        response = requests.get(book_id_url, params=params)
-        response.raise_for_status()
-
         try:
+            response = requests.get(book_id_url, params=params)
+            response.raise_for_status()
             check_for_redirect(response)
-        except HTTPError:
-            continue
 
-        book_url = f'https://tululu.org/b{book_id}'
-        book_info = parse_book_page(book_url)
-        book_name = f'{book_id}. {book_info.title}'
-        parsed_image_url = urlparse(book_info.book_image_url)
-        image_name = parsed_image_url.path.split('/')[-1]
+            book_url = f'https://tululu.org/b{book_id}'
+            book_info = parse_book_page(book_url)
+            book_name = f'{book_id}. {book_info.title}'
+            parsed_image_url = urlparse(book_info.book_image_url)
+            image_name = parsed_image_url.path.split('/')[-1]
+
+            download_txt(book_url, book_name)
+            download_image(book_info.book_image_url, image_name)
+        except HTTPError:
+            print('HTTPError')
+            continue
+        except ConnectionError:
+            connection_tries += 1
+
+            if connection_tries == 5:
+                print('ConnectionError. Going sleep 1 min.')
+                time.sleep(60)
+                connection_tries = 0
+            continue
 
         print(f'Заголовок: {book_info.title}')
         print(f'Жанр: {book_info.genres}')
         print(f'Автор: {book_info.author}')
-
-        download_txt(book_url, book_name)
-        download_image(book_info.book_image_url, image_name)
