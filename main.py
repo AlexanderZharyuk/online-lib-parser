@@ -49,6 +49,7 @@ def parse_book_page(page_html: str) -> BookInfo:
 def download_txt(url, filename, folder='books/'):
     response = requests.get(url)
     response.raise_for_status()
+    check_for_redirect(response)
 
     reformed_filename = f'{sanitize_filename(filename)}.txt'
     os.makedirs(folder, exist_ok=True)
@@ -63,6 +64,7 @@ def download_txt(url, filename, folder='books/'):
 def download_image(url, image_name, folder='images/'):
     response = requests.get(url)
     response.raise_for_status()
+    check_for_redirect(response)
 
     os.makedirs(folder, exist_ok=True)
     file_path = os.path.join(folder, image_name)
@@ -90,6 +92,7 @@ if __name__ == '__main__':
             book_url = f'https://tululu.org/b{book_id}'
             response = requests.get(book_url)
             response.raise_for_status()
+            check_for_redirect(response)
 
             book = parse_book_page(response.text)
             book_name = f'{book_id}. {book.title}'
