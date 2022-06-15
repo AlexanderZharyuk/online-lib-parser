@@ -1,4 +1,5 @@
 import argparse
+import logging
 import os
 import time
 
@@ -102,11 +103,11 @@ if __name__ == '__main__':
             download_txt(book_url, book_name)
             download_image(book_info.book_image_url, image_name)
         except ConnectionError:
-            print('ConnectionError. Going sleep 1 min.')
+            logging.error('ConnectionError. Going sleep 1 min.')
             time.sleep(60)
             continue
         except HTTPError:
-            print('HTTPError')
+            logging.error('HTTPError. Maybe book id not find.')
             continue
 
         print(f'Заголовок: {book_info.title}')
