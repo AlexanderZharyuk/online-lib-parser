@@ -4,7 +4,7 @@ import os
 import time
 
 from typing import NamedTuple
-from urllib.parse import urljoin, urlparse
+from urllib.parse import urljoin, urlparse, urlencode
 
 import requests
 
@@ -83,12 +83,9 @@ if __name__ == '__main__':
         params = {
             'id': book_id
         }
-        book_id_url = f'https://tululu.org/txt.php'
+        book_id_url = 'https://tululu.org/txt.php?'
         try:
-            response = requests.get(book_id_url, params=params)
-            book_full_url = response.url
-            response.raise_for_status()
-            check_for_redirect(response)
+            book_full_url = book_id_url + urlencode(params)
 
             book_url = f'https://tululu.org/b{book_id}/'
             response = requests.get(book_url)
