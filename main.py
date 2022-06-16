@@ -4,7 +4,7 @@ import os
 import time
 
 from typing import NamedTuple
-from urllib.parse import urljoin, urlparse, urlencode
+from urllib.parse import urljoin, urlencode
 
 import requests
 
@@ -21,7 +21,7 @@ def check_for_redirect(response):
 class BookInfo(NamedTuple):
     title: str
     author: str
-    book_image_url: str
+    book_image_name: str
     comments: str
     genres: list
 
@@ -31,15 +31,10 @@ def parse_book_page(page_html: str) -> BookInfo:
     page_info = soup.find('body').find('h1').text.replace(u'\xa0', '')
     book_title, book_author = [text.strip() for text in page_info.split('::')]
     book_image = soup.find('div', class_='bookimage').find('img')['src']
-
-    domain = 'https://tululu.org'
-    image_url = urljoin(domain, book_image)
-
     comments = [comment.find('span', class_="black").text for comment in soup.find_all('div', class_='texts')]
-
     genres = [genre.text for genre in soup.find('span', class_='d_book').find_all('a')]
 
-    return BookInfo(title=book_title, author=book_author, book_image_url=image_url,
+    return BookInfo(title=book_title, author=book_author, book_image_name=book_image,
                     comments='\n'.join(comments), genres=genres)
 
 
@@ -91,11 +86,11 @@ if __name__ == '__main__':
 
             book = parse_book_page(response.text)
             book_name = f'{book_id}. {book.title}'
-            parsed_image_url = urlparse(book.book_image_url)
-            image_name = parsed_image_url.path.split('/')[-1]
+            parsed_image_url = urljoin(book_url, book.book_image_name)
+            image_name = parsed_image_url.split('/')[-1]
 
             download_txt(book_full_url, book_name)
-            download_image(book.book_image_url, image_name)
+            download_image(parsed_image_url, image_name)
         except ConnectionError:
             logging.error('ConnectionError. Going sleep 1 min.')
             time.sleep(60)
@@ -107,4 +102,3 @@ if __name__ == '__main__':
         print(f'Заголовок: {book.title}')
         print(f'Жанр: {book.genres}')
         print(f'Автор: {book.author}')
-        print(f'Comments: {book.comments}')
