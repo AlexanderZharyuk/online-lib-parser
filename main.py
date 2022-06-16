@@ -35,10 +35,7 @@ def parse_book_page(page_html: str) -> BookInfo:
     domain = 'https://tululu.org'
     image_url = urljoin(domain, book_image)
 
-    comments = ''
-    if soup.find('div', class_='texts'):
-        comments_html = soup.find_all('div', class_='texts')
-        comments = [comment.find('span', class_="black").text for comment in comments_html]
+    comments = [comment.find('span', class_="black").text for comment in soup.find_all('div', class_='texts')]
 
     genres = [genre.text for genre in soup.find('span', class_='d_book').find_all('a')]
 
@@ -110,3 +107,4 @@ if __name__ == '__main__':
         print(f'Заголовок: {book.title}')
         print(f'Жанр: {book.genres}')
         print(f'Автор: {book.author}')
+        print(f'Comments: {book.comments}')
