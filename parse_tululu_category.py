@@ -1,3 +1,4 @@
+import argparse
 import urllib.parse
 import json
 
@@ -8,11 +9,11 @@ from bs4 import BeautifulSoup
 from main import parse_book_page, download_txt, download_image
 
 
-def find_books(category_url: str, pages: int) -> list:
+def find_books(category_url: str, start_page: int, end_page: int) -> list:
     base_url = 'https://tululu.org/'
 
     founded_books = []
-    for page_number in range(1, pages + 1):
+    for page_number in range(start_page, end_page):
         page_url = urllib.parse.urljoin(category_url, str(page_number))
         response = requests.get(page_url)
         response.raise_for_status()
@@ -53,7 +54,29 @@ def write_to_json(books_urls: list) -> None:
         json.dump(books_to_json, json_file, ensure_ascii=False, indent=4)
 
 
-if __name__ == '__main__':
-    founded_books = find_books('https://tululu.org/l55/', 1)
+def get_pages_count(category_url: str) -> int:
+    response = requests.get(category_url)
+    response.raise_for_status()
+
+    soup = BeautifulSoup(response.text, 'lxml')
+    selector = '.npage'
+    pages_count = int(soup.select(selector)[-1].text)
+
+    return pages_count
+
+
+def main():
+    pages_count = get_pages_count('https://tululu.org/l55/')
+
+    parser = argparse.ArgumentParser(description='Парсер книг из категории Научная Фантастика.')
+    parser.add_argument('--start_page', type=int, default=1)
+    parser.add_argument('--end_page', type=int, default=pages_count)
+    args = parser.parse_args()
+
+    founded_books = find_books('https://tululu.org/l55/', start_page=args.start_page,
+                               end_page=args.end_page)
     write_to_json(founded_books)
 
+
+if __name__ == '__main__':
+    main()
