@@ -2,3 +2,4 @@
 .idea/
 books/
 images/
+__pycache__/
