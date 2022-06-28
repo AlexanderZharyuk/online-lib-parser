@@ -46,7 +46,7 @@ def parse_book_page(page_html: str) -> BookInfo:
                     comments=comments, genres=genres)
 
 
-def download_txt(url, filename, folder='books/'):
+def download_txt(url, filename, folder='parse_results/books/'):
     response = requests.get(url)
     response.raise_for_status()
     check_for_redirect(response)
@@ -61,7 +61,7 @@ def download_txt(url, filename, folder='books/'):
     return file_path
 
 
-def download_image(url, image_name, folder='images/'):
+def download_image(url, image_name, folder='parse_results/images/'):
     response = requests.get(url)
     response.raise_for_status()
     check_for_redirect(response)
