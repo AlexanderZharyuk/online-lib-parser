@@ -2,10 +2,13 @@ import argparse
 import urllib.parse
 import json
 import os
+import time
+import logging
 
 import requests
 
 from bs4 import BeautifulSoup
+from requests.exceptions import HTTPError
 
 from general_functions import parse_book_page, download_txt, download_image
 
@@ -36,8 +39,16 @@ def write_to_json(books_urls: list, folder: str, skip_images: bool,
         books_folder = os.path.join(folder, 'books')
         images_folder = os.path.join(folder, 'images')
 
-        response = requests.get(book_url)
-        response.raise_for_status()
+        try:
+            response = requests.get(book_url)
+            response.raise_for_status()
+        except ConnectionError:
+            logging.error('ConnectionError. Something was wrong with Internet Connection. Going sleep 1 min.')
+            time.sleep(60)
+            continue
+        except HTTPError:
+            logging.error("HTTPError, can't find address")
+            continue
 
         requested_book = parse_book_page(response.text)
         book = {
