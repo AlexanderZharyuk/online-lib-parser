@@ -22,7 +22,7 @@ class BookInfo(NamedTuple):
     title: str
     author: str
     book_image_name: str
-    comments: str
+    comments: list
     genres: list
 
 
@@ -35,7 +35,7 @@ def parse_book_page(page_html: str) -> BookInfo:
     genres = [genre.text for genre in soup.find('span', class_='d_book').find_all('a')]
 
     return BookInfo(title=book_title, author=book_author, book_image_name=book_image,
-                    comments='\n'.join(comments), genres=genres)
+                    comments=comments, genres=genres)
 
 
 def download_txt(url, filename, folder='books/'):
@@ -64,8 +64,10 @@ def download_image(url, image_name, folder='images/'):
     with open(file_path, 'wb') as image:
         image.write(response.content)
 
+    return file_path
 
-if __name__ == '__main__':
+
+def main():
     parser = argparse.ArgumentParser(description='Парсер выводит информацию о книгах, их картинки и качает их.')
     parser.add_argument('--start_id', type=int, default=1)
     parser.add_argument('--end_id', type=int, default=10)
@@ -102,3 +104,7 @@ if __name__ == '__main__':
         print(f'Заголовок: {book.title}')
         print(f'Жанр: {book.genres}')
         print(f'Автор: {book.author}')
+
+
+if __name__ == '__main__':
+    main()
