@@ -18,14 +18,15 @@ def find_books(category_url: str, pages: int) -> list:
         response.raise_for_status()
 
         soup = BeautifulSoup(response.text, 'lxml')
-        books_ids = [book_id.find('a')['href'] for book_id in soup.find_all('div', class_='bookimage')]
+        selector = '.bookimage a'
+        books_ids = [found_selector['href'] for found_selector in soup.select(selector)]
         for book_id in books_ids:
             founded_books.append(urllib.parse.urljoin(base_url, book_id))
 
     return founded_books
 
 
-def write_to_json(books_urls: list):
+def write_to_json(books_urls: list) -> None:
     books_to_json = []
 
     for book_url in books_urls:
@@ -53,6 +54,6 @@ def write_to_json(books_urls: list):
 
 
 if __name__ == '__main__':
-    founded_books = find_books('https://tululu.org/l55/', 4)
+    founded_books = find_books('https://tululu.org/l55/', 1)
     write_to_json(founded_books)
 

@@ -28,11 +28,19 @@ class BookInfo(NamedTuple):
 
 def parse_book_page(page_html: str) -> BookInfo:
     soup = BeautifulSoup(page_html, 'lxml')
-    page_info = soup.find('body').find('h1').text.replace(u'\xa0', '')
+
+    selector = 'body h1'
+    page_info = soup.select_one(selector).text.replace(u'\xa0', '')
     book_title, book_author = [text.strip() for text in page_info.split('::')]
-    book_image = soup.find('div', class_='bookimage').find('img')['src']
-    comments = [comment.find('span', class_="black").text for comment in soup.find_all('div', class_='texts')]
-    genres = [genre.text for genre in soup.find('span', class_='d_book').find_all('a')]
+
+    selector = '.bookimage img'
+    book_image = soup.select_one(selector)['src']
+
+    selector = '.texts .black'
+    comments = [comment.text for comment in soup.select(selector)]
+
+    selector = 'span.d_book a'
+    genres = [genre.text for genre in soup.select(selector)]
 
     return BookInfo(title=book_title, author=book_author, book_image_name=book_image,
                     comments=comments, genres=genres)
