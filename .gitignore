@@ -3,3 +3,4 @@
 books/
 images/
 __pycache__/
+*.json
