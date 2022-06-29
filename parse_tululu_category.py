@@ -14,7 +14,7 @@ from general_functions import parse_book_page, download_txt, download_image
 
 
 def find_books(category_url: str, start_page: int, end_page: int) -> list:
-    founded_books = []
+    all_books_ids = []
     for page_number in range(start_page, end_page):
         page_url = urllib.parse.urljoin(category_url, str(page_number))
         response = requests.get(page_url)
@@ -22,10 +22,10 @@ def find_books(category_url: str, start_page: int, end_page: int) -> list:
 
         soup = BeautifulSoup(response.text, 'lxml')
         selector = '.bookimage a'
-        books_ids = [found_selector['href'] for found_selector in soup.select(selector)]
-        for book_id in books_ids:
-            founded_books.append(urllib.parse.urljoin(category_url, book_id))
+        books_in_page_ids = [found_selector['href'] for found_selector in soup.select(selector)]
+        [all_books_ids.append(book_id) for book_id in books_in_page_ids]
 
+    founded_books = [urllib.parse.urljoin(category_url, book_id) for book_id in all_books_ids]
     return founded_books
 
 
