@@ -10,20 +10,29 @@ import requests
 from bs4 import BeautifulSoup
 from requests.exceptions import HTTPError
 
-from general_functions import parse_book_page, download_txt, download_image
+from general_functions import parse_book_page, download_txt, download_image, check_for_redirect
 
 
 def find_books(category_url: str, start_page: int, end_page: int) -> list:
     all_books_ids = []
     for page_number in range(start_page, end_page):
         page_url = urllib.parse.urljoin(category_url, str(page_number))
-        response = requests.get(page_url)
-        response.raise_for_status()
-
-        soup = BeautifulSoup(response.text, 'lxml')
-        selector = '.bookimage a'
-        books_in_page_ids = [found_selector['href'] for found_selector in soup.select(selector)]
-        [all_books_ids.append(book_id) for book_id in books_in_page_ids]
+        try:
+            response = requests.get(page_url)
+            response.raise_for_status()
+            check_for_redirect(response)
+        except ConnectionError:
+            logging.error('ConnectionError. Something was wrong with Internet Connection. Going sleep 1 min.')
+            time.sleep(60)
+            continue
+        except HTTPError:
+            logging.error("HTTPError, can't find address")
+            continue
+        else:
+            soup = BeautifulSoup(response.text, 'lxml')
+            selector = '.bookimage a'
+            books_in_page_ids = [found_selector['href'] for found_selector in soup.select(selector)]
+            [all_books_ids.append(book_id) for book_id in books_in_page_ids]
 
     founded_books = [urllib.parse.urljoin(category_url, book_id) for book_id in all_books_ids]
     return founded_books
@@ -40,6 +49,7 @@ def write_to_json(books_urls: list, folder: str, skip_images: bool,
         try:
             response = requests.get(book_url)
             response.raise_for_status()
+            check_for_redirect(response)
         except ConnectionError:
             logging.error('ConnectionError. Something was wrong with Internet Connection. Going sleep 1 min.')
             time.sleep(60)
