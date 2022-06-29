@@ -38,10 +38,9 @@ def find_books(category_url: str, start_page: int, end_page: int) -> list:
     return founded_books
 
 
-def write_to_json(books_urls: list, folder: str, skip_images: bool,
-                  skip_txts: bool, json_path: str) -> None:
+def collect_books_for_json(books_urls: list, folder: str, skip_images: bool,
+                          skip_txts: bool, ) -> list:
     books_to_json = []
-
     for book_url in books_urls:
         books_folder = os.path.join(folder, 'books')
         images_folder = os.path.join(folder, 'images')
@@ -59,33 +58,40 @@ def write_to_json(books_urls: list, folder: str, skip_images: bool,
             continue
 
         requested_book = parse_book_page(response.text)
-        book = {
-            'title': requested_book.title,
-            'author': requested_book.author
-        }
-
         parsed_image_url = urllib.parse.urljoin(book_url, requested_book.book_image_name)
         image_name = parsed_image_url.split('/')[-1]
+
+        book_image_path = None
         if not skip_images:
             book_image_path = download_image(url=parsed_image_url, image_name=image_name,
                                              folder=images_folder)
-            book['img_src'] = book_image_path
 
+        book_path = None
         if not skip_txts:
             book_path = download_txt(url=book_url, filename=requested_book.title,
                                      folder=books_folder)
-            book['book_path'] = book_path
 
-        book['comments'] = requested_book.comments
-        book['genres'] = requested_book.genres
+        book = {
+            'title': requested_book.title,
+            'author': requested_book.author,
+            'img_src': book_image_path,
+            'book_path': book_path,
+            'comments': requested_book.comments,
+            'genres': requested_book.genres
+        }
+
         books_to_json.append(book)
 
+    return books_to_json
+
+
+def write_to_json(json_path: str, books: list) -> None:
     json_folder, json_filename = os.path.split(json_path)
     if not os.path.isdir(json_folder):
         os.makedirs(json_folder, exist_ok=True)
 
     with open(json_path, 'w') as json_file:
-        json.dump(books_to_json, json_file, ensure_ascii=False, indent=4)
+        json.dump(books, json_file, ensure_ascii=False, indent=4)
 
 
 def get_pages_count(category_url: str) -> int:
@@ -119,8 +125,9 @@ def main():
 
     founded_books = find_books('https://tululu.org/l55/', start_page=args.start_page,
                                end_page=args.end_page)
-    write_to_json(founded_books, folder=args.dest_folder, skip_images=args.skip_imgs,
-                  skip_txts=args.skip_txts, json_path=args.json_path)
+    books = collect_books_for_json(founded_books, folder=args.dest_folder, skip_images=args.skip_imgs,
+                                   skip_txts=args.skip_txts, )
+    write_to_json(json_path=args.json_path, books=books)
 
 
 if __name__ == '__main__':
