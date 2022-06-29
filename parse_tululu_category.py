@@ -14,8 +14,6 @@ from general_functions import parse_book_page, download_txt, download_image
 
 
 def find_books(category_url: str, start_page: int, end_page: int) -> list:
-    base_url = 'https://tululu.org/'
-
     founded_books = []
     for page_number in range(start_page, end_page):
         page_url = urllib.parse.urljoin(category_url, str(page_number))
@@ -26,7 +24,7 @@ def find_books(category_url: str, start_page: int, end_page: int) -> list:
         selector = '.bookimage a'
         books_ids = [found_selector['href'] for found_selector in soup.select(selector)]
         for book_id in books_ids:
-            founded_books.append(urllib.parse.urljoin(base_url, book_id))
+            founded_books.append(urllib.parse.urljoin(category_url, book_id))
 
     return founded_books
 
