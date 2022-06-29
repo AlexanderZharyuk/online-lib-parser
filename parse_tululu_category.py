@@ -85,8 +85,8 @@ def get_pages_count(category_url: str) -> int:
     response.raise_for_status()
 
     soup = BeautifulSoup(response.text, 'lxml')
-    selector = '.npage'
-    pages_count = int(soup.select(selector)[-1].text)
+    selector = '.npage:last-of-type'
+    pages_count = int(soup.select_one(selector).text)
 
     return pages_count
 
