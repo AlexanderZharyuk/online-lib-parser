@@ -17,7 +17,7 @@ def check_for_redirect(response):
 class BookInfo(NamedTuple):
     title: str
     author: str
-    book_image_name: str
+    book_image_url: str
     comments: list
     genres: list
 
@@ -38,7 +38,7 @@ def parse_book_page(page_html: str) -> BookInfo:
     selector = 'span.d_book a'
     genres = [genre.text for genre in soup.select(selector)]
 
-    return BookInfo(title=book_title, author=book_author, book_image_name=book_image,
+    return BookInfo(title=book_title, author=book_author, book_image_url=book_image,
                     comments=comments, genres=genres)
 
 

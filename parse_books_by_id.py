@@ -31,7 +31,7 @@ def main():
 
             book = parse_book_page(response.text)
             book_name = f'{book_id}. {book.title}'
-            parsed_image_url = urljoin(book_url, book.book_image_name)
+            parsed_image_url = urljoin(book_url, book.book_image_url)
             image_name = parsed_image_url.split('/')[-1]
 
             download_txt(book_full_url, book_name)

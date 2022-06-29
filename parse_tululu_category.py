@@ -58,7 +58,7 @@ def collect_books_for_json(books_urls: list, folder: str, skip_images: bool,
             continue
 
         requested_book = parse_book_page(response.text)
-        parsed_image_url = urllib.parse.urljoin(book_url, requested_book.book_image_name)
+        parsed_image_url = urllib.parse.urljoin(book_url, requested_book.book_image_url)
         image_name = parsed_image_url.split('/')[-1]
 
         book_image_path = None
