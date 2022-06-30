@@ -39,7 +39,7 @@ def find_books(category_url: str, start_page: int, end_page: int) -> list:
 
 
 def collect_books_for_json(books_urls: list, folder: str, skip_images: bool,
-                          skip_txts: bool, ) -> list:
+                           skip_txts: bool, ) -> list:
     books_to_json = []
     for book_url in books_urls:
         books_folder = os.path.join(folder, 'books')
@@ -49,6 +49,21 @@ def collect_books_for_json(books_urls: list, folder: str, skip_images: bool,
             response = requests.get(book_url)
             response.raise_for_status()
             check_for_redirect(response)
+
+            requested_book = parse_book_page(response.text)
+            parsed_image_url = urllib.parse.urljoin(book_url, requested_book.book_image_url)
+            image_name = parsed_image_url.split('/')[-1]
+
+            book_image_path = None
+            if not skip_images:
+                book_image_path = download_image(url=parsed_image_url, image_name=image_name,
+                                                 folder=images_folder)
+
+            book_path = None
+            if not skip_txts:
+                book_path = download_txt(url=book_url, filename=requested_book.title,
+                                         folder=books_folder)
+
         except ConnectionError:
             logging.error('ConnectionError. Something was wrong with Internet Connection. Going sleep 1 min.')
             time.sleep(60)
@@ -56,20 +71,6 @@ def collect_books_for_json(books_urls: list, folder: str, skip_images: bool,
         except HTTPError:
             logging.error("HTTPError, can't find address")
             continue
-
-        requested_book = parse_book_page(response.text)
-        parsed_image_url = urllib.parse.urljoin(book_url, requested_book.book_image_url)
-        image_name = parsed_image_url.split('/')[-1]
-
-        book_image_path = None
-        if not skip_images:
-            book_image_path = download_image(url=parsed_image_url, image_name=image_name,
-                                             folder=images_folder)
-
-        book_path = None
-        if not skip_txts:
-            book_path = download_txt(url=book_url, filename=requested_book.title,
-                                     folder=books_folder)
 
         book = {
             'title': requested_book.title,
