@@ -88,8 +88,7 @@ def collect_books_for_json(books_urls: list, folder: str, skip_images: bool,
 
 def write_to_json(json_path: str, books: list) -> None:
     json_folder, json_filename = os.path.split(json_path)
-    if not os.path.isdir(json_folder):
-        os.makedirs(json_folder, exist_ok=True)
+    os.makedirs(json_folder, exist_ok=True)
 
     with open(json_path, 'w') as json_file:
         json.dump(books, json_file, ensure_ascii=False, indent=4)
