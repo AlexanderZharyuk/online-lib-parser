@@ -14,7 +14,7 @@ def check_for_redirect(response):
         raise HTTPError
 
 
-class BookInfo(NamedTuple):
+class Book(NamedTuple):
     title: str
     author: str
     book_image_url: str
@@ -22,12 +22,12 @@ class BookInfo(NamedTuple):
     genres: list
 
 
-def parse_book_page(page_html: str) -> BookInfo:
+def parse_book_page(page_html: str) -> Book:
     soup = BeautifulSoup(page_html, 'lxml')
 
     selector = 'body h1'
-    page_info = soup.select_one(selector).text.replace(u'\xa0', '')
-    book_title, book_author = [text.strip() for text in page_info.split('::')]
+    page = soup.select_one(selector).text.replace(u'\xa0', '')
+    book_title, book_author = [text.strip() for text in page.split('::')]
 
     selector = '.bookimage img'
     book_image = soup.select_one(selector)['src']
@@ -38,8 +38,8 @@ def parse_book_page(page_html: str) -> BookInfo:
     selector = 'span.d_book a'
     genres = [genre.text for genre in soup.select(selector)]
 
-    return BookInfo(title=book_title, author=book_author, book_image_url=book_image,
-                    comments=comments, genres=genres)
+    return Book(title=book_title, author=book_author, book_image_url=book_image,
+                comments=comments, genres=genres)
 
 
 def download_txt(url, filename, folder='parse_results/books/'):
