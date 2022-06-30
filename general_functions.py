@@ -30,7 +30,7 @@ def parse_book_page(page_html: str) -> Book:
     book_title, book_author = [text.strip() for text in page.split('::')]
 
     selector = '.bookimage img'
-    book_image = soup.select_one(selector)['src']
+    book_image_url = soup.select_one(selector)['src']
 
     selector = '.texts .black'
     comments = [comment.text for comment in soup.select(selector)]
@@ -38,7 +38,7 @@ def parse_book_page(page_html: str) -> Book:
     selector = 'span.d_book a'
     genres = [genre.text for genre in soup.select(selector)]
 
-    return Book(title=book_title, author=book_author, book_image_url=book_image,
+    return Book(title=book_title, author=book_author, book_image_url=book_image_url,
                 comments=comments, genres=genres)
 
 
