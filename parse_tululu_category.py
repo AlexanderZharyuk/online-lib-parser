@@ -1,9 +1,11 @@
 import argparse
-import urllib.parse
 import json
 import os
 import time
 import logging
+
+from string import digits
+from urllib.parse import urljoin, urlencode, urlparse
 
 import requests
 
@@ -14,10 +16,18 @@ from general_functions import (parse_book_page, download_txt,
                                download_image, check_for_redirect)
 
 
+def get_book_id(book_path: str) -> str:
+    cleaned_book_id = ''
+    for symbol in book_path:
+        if symbol in digits:
+            cleaned_book_id += symbol
+    return cleaned_book_id
+
+
 def find_books(category_url: str, start_page: int, end_page: int) -> list:
     all_books_ids = []
     for page_number in range(start_page, end_page):
-        page_url = urllib.parse.urljoin(category_url, str(page_number))
+        page_url = urljoin(category_url, str(page_number))
         try:
             response = requests.get(page_url)
             response.raise_for_status()
@@ -37,7 +47,7 @@ def find_books(category_url: str, start_page: int, end_page: int) -> list:
                                  soup.select(selector)]
             [all_books_ids.append(book_id) for book_id in books_in_page_ids]
 
-    founded_books = [urllib.parse.urljoin(category_url, book_id) for book_id in
+    founded_books = [urljoin(category_url, book_id) for book_id in
                      all_books_ids]
     return founded_books
 
@@ -55,7 +65,7 @@ def collect_books_for_json(books_urls: list, folder: str, skip_images: bool,
             check_for_redirect(response)
 
             requested_book = parse_book_page(response.text)
-            parsed_image_url = urllib.parse.urljoin(
+            parsed_image_url = urljoin(
                 book_url, requested_book.book_image_url
             )
             image_name = parsed_image_url.split('/')[-1]
@@ -68,7 +78,13 @@ def collect_books_for_json(books_urls: list, folder: str, skip_images: bool,
 
             book_path = None
             if not skip_txts:
-                book_path = download_txt(url=book_url,
+                book_id = get_book_id(book_url)
+                book_id_url = 'https://tululu.org/txt.php?'
+                params = {
+                    'id': book_id
+                }
+                full_url_for_download = book_id_url + urlencode(params)
+                book_path = download_txt(url=full_url_for_download,
                                          filename=requested_book.title,
                                          folder=books_folder)
 
