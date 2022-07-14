@@ -36,7 +36,7 @@ python3 parse_books_by_id.py
 
 Пример выполнения скрипта:
 ```
-python3 main.py --start_id=20 --end_id=30
+python3 parse_books_by_id.py --start_id=20 --end_id=30
 ```
 
 * **parse_tululu_category.py**
