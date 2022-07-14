@@ -3,6 +3,7 @@ import json
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from livereload import Server
+from more_itertools import chunked
 
 
 def find_json_file(file: str, path: str) -> str:
@@ -30,7 +31,7 @@ def get_books_from_json() -> dict:
 
 def on_reload() -> None:
     template = get_template(filename='template.html')
-    books = get_books_from_json()
+    books = list(chunked(get_books_from_json(), 2))
     rendered_page = template.render(books=books)
 
     with open('index.html', 'w', encoding="utf8") as file:
