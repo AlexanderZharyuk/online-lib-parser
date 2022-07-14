@@ -1,5 +1,6 @@
 import os
 import json
+import pprint
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from livereload import Server
@@ -32,16 +33,32 @@ def get_books_from_json() -> dict:
 def on_reload() -> None:
     template = get_template(filename='template.html')
     books = list(chunked(get_books_from_json(), 2))
-    rendered_page = template.render(books=books)
+    os.makedirs('pages', exist_ok=True)
 
-    with open('index.html', 'w', encoding="utf8") as file:
-        file.write(rendered_page)
+    page = 1
+    max_row_with_books = 5
+    books_on_page = []
+    for row_with_books, books in enumerate(books):
+        if row_with_books >= max_row_with_books \
+                and row_with_books % max_row_with_books == 0:
+            rendered_page = template.render(books=books_on_page)
+
+            with open(
+                    f'pages/index{page}.html',
+                    'w',
+                    encoding="utf8"
+            ) as file:
+                file.write(rendered_page)
+                page += 1
+                books_on_page = []
+
+        books_on_page.append(books)
 
 
 def main() -> None:
     server = Server()
     on_reload()
-    server.watch(filepath='index.html')
+    server.watch(filepath='pages')
     server.serve()
 
 
