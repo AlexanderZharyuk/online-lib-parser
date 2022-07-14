@@ -2,6 +2,7 @@ import os
 import json
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
+from livereload import Server
 
 
 def find_json_file(file: str, path: str) -> str:
@@ -27,7 +28,7 @@ def get_books_from_json() -> dict:
     return books
 
 
-def main():
+def on_reload() -> None:
     template = get_template(filename='template.html')
     books = get_books_from_json()
     rendered_page = template.render(books=books)
@@ -36,6 +37,12 @@ def main():
         file.write(rendered_page)
 
 
+def main() -> None:
+    server = Server()
+    on_reload()
+    server.watch(filepath='index.html')
+    server.serve()
+
+
 if __name__ == '__main__':
     main()
-
