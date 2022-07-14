@@ -13,13 +13,13 @@
             <div class="card border-secondary mb-3 col-sm" style="max-width: 540px; margin-right: 20px; padding: 0px;">
               <div class="row no-gutters">
                 <div class="col-md-4" style="padding-left: 0px;">
-                  <img src="{{ book[0].img_src }}" class="card-img" alt="{{ book[0].title }} img">
+                  <img src="{{ book[0].img_src }}" class="card-img" alt="{{ book.title }} img">
                 </div>
                 <div class="col-md-8">
                   <div class="card-body">
                     <h5 class="card-title">{{ book[0].title }}</h5>
                     <p class="card-text">{{ book[0].author }}</p>
-                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                    <a class="card-text" href="{{ book[0].book_path.replace(' ', '%20') }}">Читать</a>
                   </div>
                 </div>
               </div>
@@ -27,13 +27,13 @@
             <div class="card border-secondary mb-3 col-sm" style="max-width: 540px; padding: 0px;">
               <div class="row no-gutters">
                 <div class="col-md-4">
-                  <img src="{{ book[1].img_src }}" class="card-img" alt="{{ book[0].title }} img">
+                  <img src="{{ book[-1].img_src }}" class="card-img" alt="{{ book[-1].title }} img">
                 </div>
                 <div class="col-md-8">
                   <div class="card-body">
-                    <h5 class="card-title">{{ book[1].title }}</h5>
-                    <p class="card-text">{{ book[1].author }}</p>
-                    <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                    <h5 class="card-title">{{ book[-1].title }}</h5>
+                    <p class="card-text">{{ book[-1].author }}</p>
+                    <a class="card-text" href="{{ book[-1].book_path.replace(' ', '%20') }}">Читать</a>
                   </div>
                 </div>
               </div>
