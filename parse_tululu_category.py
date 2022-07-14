@@ -10,7 +10,8 @@ import requests
 from bs4 import BeautifulSoup
 from requests.exceptions import HTTPError
 
-from general_functions import parse_book_page, download_txt, download_image, check_for_redirect
+from general_functions import (parse_book_page, download_txt,
+                               download_image, check_for_redirect)
 
 
 def find_books(category_url: str, start_page: int, end_page: int) -> list:
@@ -22,7 +23,8 @@ def find_books(category_url: str, start_page: int, end_page: int) -> list:
             response.raise_for_status()
             check_for_redirect(response)
         except ConnectionError:
-            logging.error('ConnectionError. Something was wrong with Internet Connection. Going sleep 1 min.')
+            logging.error('ConnectionError. Something was wrong '
+                          'with Internet Connection. Going sleep 1 min.')
             time.sleep(60)
             continue
         except HTTPError:
@@ -31,10 +33,12 @@ def find_books(category_url: str, start_page: int, end_page: int) -> list:
         else:
             soup = BeautifulSoup(response.text, 'lxml')
             selector = '.bookimage a'
-            books_in_page_ids = [found_selector['href'] for found_selector in soup.select(selector)]
+            books_in_page_ids = [found_selector['href'] for found_selector in
+                                 soup.select(selector)]
             [all_books_ids.append(book_id) for book_id in books_in_page_ids]
 
-    founded_books = [urllib.parse.urljoin(category_url, book_id) for book_id in all_books_ids]
+    founded_books = [urllib.parse.urljoin(category_url, book_id) for book_id in
+                     all_books_ids]
     return founded_books
 
 
@@ -51,21 +55,26 @@ def collect_books_for_json(books_urls: list, folder: str, skip_images: bool,
             check_for_redirect(response)
 
             requested_book = parse_book_page(response.text)
-            parsed_image_url = urllib.parse.urljoin(book_url, requested_book.book_image_url)
+            parsed_image_url = urllib.parse.urljoin(
+                book_url, requested_book.book_image_url
+            )
             image_name = parsed_image_url.split('/')[-1]
 
             book_image_path = None
             if not skip_images:
-                book_image_path = download_image(url=parsed_image_url, image_name=image_name,
+                book_image_path = download_image(url=parsed_image_url,
+                                                 image_name=image_name,
                                                  folder=images_folder)
 
             book_path = None
             if not skip_txts:
-                book_path = download_txt(url=book_url, filename=requested_book.title,
+                book_path = download_txt(url=book_url,
+                                         filename=requested_book.title,
                                          folder=books_folder)
 
         except ConnectionError:
-            logging.error('ConnectionError. Something was wrong with Internet Connection. Going sleep 1 min.')
+            logging.error('ConnectionError. Something was wrong with '
+                          'Internet Connection. Going sleep 1 min.')
             time.sleep(60)
             continue
         except HTTPError:
@@ -108,24 +117,41 @@ def get_pages_count(category_url: str) -> int:
 def main():
     pages_count = get_pages_count('https://tululu.org/l55/')
 
-    parser = argparse.ArgumentParser(description='Парсер книг из категории Научная Фантастика.')
-    parser.add_argument('--start_page', type=int, default=1,
+    parser = argparse.ArgumentParser(description='Парсер книг из категории '
+                                                 'Научная Фантастика.')
+    parser.add_argument('--start_page',
+                        type=int,
+                        default=1,
                         help='Укажите с какой страницы начать парсинг')
-    parser.add_argument('--end_page', type=int, default=pages_count + 1,
+    parser.add_argument('--end_page',
+                        type=int,
+                        default=pages_count + 1,
                         help='Укажите на какой странице закончить парсинг')
-    parser.add_argument('--dest_folder', type=str, default='parse_results/',
+    parser.add_argument('--dest_folder',
+                        type=str,
+                        default='parse_results/',
                         help='Папка, куда сохранится результат парсинга')
-    parser.add_argument('--skip_imgs', action='store_true',
-                        help='Укажите этот флаг, если не хотите скачивать фото книги')
-    parser.add_argument('--skip_txts', action='store_true',
-                        help='Укажите этот флаг, если не хотите скачивать текст книги')
-    parser.add_argument('--json_path', type=str, default='parse_results/books_data.json',
-                        help='Можете указать свой путь до .json-файла, где будет информация о книгах.')
+    parser.add_argument('--skip_imgs',
+                        action='store_true',
+                        help='Укажите этот флаг, если не хотите '
+                             'скачивать фото книги')
+    parser.add_argument('--skip_txts',
+                        action='store_true',
+                        help='Укажите этот флаг, если не хотите '
+                             'скачивать текст книги')
+    parser.add_argument('--json_path',
+                        type=str,
+                        default='parse_results/books_data.json',
+                        help='Можете указать свой путь до .json-файла, '
+                             'где будет информация о книгах.')
     args = parser.parse_args()
 
-    founded_books = find_books('https://tululu.org/l55/', start_page=args.start_page,
+    founded_books = find_books('https://tululu.org/l55/',
+                               start_page=args.start_page,
                                end_page=args.end_page)
-    books = collect_books_for_json(founded_books, folder=args.dest_folder, skip_images=args.skip_imgs,
+    books = collect_books_for_json(founded_books,
+                                   folder=args.dest_folder,
+                                   skip_images=args.skip_imgs,
                                    skip_txts=args.skip_txts, )
     write_to_json(json_path=args.json_path, books=books)
 

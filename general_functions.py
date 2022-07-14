@@ -38,8 +38,11 @@ def parse_book_page(page_html: str) -> Book:
     selector = 'span.d_book a'
     genres = [genre.text for genre in soup.select(selector)]
 
-    return Book(title=book_title, author=book_author, book_image_url=book_image_url,
-                comments=comments, genres=genres)
+    return Book(title=book_title,
+                author=book_author,
+                book_image_url=book_image_url,
+                comments=comments,
+                genres=genres)
 
 
 def download_txt(url, filename, folder='parse_results/books/'):

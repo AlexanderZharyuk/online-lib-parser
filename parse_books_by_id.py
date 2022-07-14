@@ -12,7 +12,10 @@ from general_functions import check_for_redirect, parse_book_page, download_txt,
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Парсер выводит информацию о книгах, их картинки и качает их.')
+    parser = argparse.ArgumentParser(
+        description='Парсер выводит информацию о '
+                    'книгах, их картинки и качает их.'
+    )
     parser.add_argument('--start_id', type=int, default=1)
     parser.add_argument('--end_id', type=int, default=10)
     args = parser.parse_args()
