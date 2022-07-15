@@ -1,6 +1,5 @@
 import os
 import json
-import pprint
 import math
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -39,7 +38,7 @@ def on_reload() -> None:
     max_row_with_books = 5
     books_per_page = max_row_with_books * 2
     all_books_count = len(books) * 2
-    total_pages = all_books_count // books_per_page
+    total_pages = math.ceil(all_books_count / books_per_page)
 
     page = 1
     books_on_page = []
@@ -58,8 +57,18 @@ def on_reload() -> None:
 
             page += 1
             books_on_page = []
-
         books_on_page.append(books)
+
+    if books_on_page:
+        rendered_page = template.render(
+            books=books_on_page,
+            total_pages=total_pages,
+            page=page
+        )
+
+        index_file = f'pages/index{page}.html'
+        with open(index_file, 'w', encoding="utf8") as file:
+            file.write(rendered_page)
 
 
 def main() -> None:
