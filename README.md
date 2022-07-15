@@ -1,6 +1,8 @@
 # LIBRARY PARSER
 
-Парсер, который позволяет получить информацию о книгах с сайта [tutulu](https://tululu.org/).
+Парсер, который позволяет получить информацию о книгах с сайта [tutulu](https://tululu.org/). А также вывести эту информацию на свой сайт.
+
+Пример сайта: [https://alexanderzharyuk.github.io/](https://alexanderzharyuk.github.io/online-lib-parser/pages/index1.html)
 
 ## Предустановка
 
@@ -10,6 +12,16 @@
 ```
 pip install -r requirements.txt
 ```
+
+### Если вы хотите запустить сайт локально
+Для запуска сайта локально напишите команду:
+
+```shell
+python3 render_website.py
+```
+После чего запустится сервер по адресу `http://127.0.0.1:5500/`, далее переходите по ссылке [http://127.0.0.1:5500/pages/index1.html](http://127.0.0.1:5500/pages/index1.html).
+
+### Если вы хотите собрать свою базу с книгами
 
 ### Описание файлов и работа с ними
 
