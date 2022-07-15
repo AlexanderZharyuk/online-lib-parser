@@ -22,14 +22,7 @@ python3 render_website.py
 После чего запустится сервер по адресу `http://127.0.0.1:5500/`, далее переходите по ссылке [http://127.0.0.1:5500/pages/index1.html](http://127.0.0.1:5500/pages/index1.html).
 
 ### Если вы хотите собрать свою базу с книгами
-
-### Описание файлов и работа с ними
-
-* **general_functions.py**
-
-Файл, где лежат вспомогательные/общие функции для работы парсера.
-
-Также в репозитории есть два скрипта:
+Для создания json-файла с данными используйте следующие файлы:
 
 * **parse_books_by_id.py**
 
@@ -77,11 +70,13 @@ python3 parse_tululu_category.py --start_page=650 --end_page 700 --dest_folder r
 python3 parse_tululu_category.py --end_page 10 --skip_txts --json_path json_files/json_data.json
 ```
 
-Если вы хотите увидеть все аргументы в консоле - напишите:
+После заполнения данных - запускаете локальный сервер командой:
 
-``` 
-python3 sriptname --help
+```shell
+python3 render_website.py
 ```
+
+Если вы хотите поменять что-либо в верстке сайта - используйте файл `template.html`.
 
 ## Создано при помощи
 
