@@ -7,12 +7,12 @@
     <title>Books</title>
   </head>
   <body>
-    <nav aria-label="Paginator">
+    <nav aria-label="Paginator" style="margin: 25px;">
       <nav aria-label="paginator">
         <ul class="pagination justify-content-center">
           {% if page == 1%}
             <li class="page-item disabled">
-              <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Назад</a>
+              <a class="page-link" href="#" tabindex="-1">Назад</a>
             </li>
           {% else %}
             <li class="page-item">
@@ -32,7 +32,7 @@
 
           {% if page == total_pages %}
             <li class="page-item disabled">
-              <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Вперед</a>
+              <a class="page-link" href="#" tabindex="-1">Вперед</a>
             </li>
           {% else %}
             <li class="page-item">
@@ -55,6 +55,10 @@
                 <div class="card-body">
                   <h5 class="card-title">{{ book[0].title }}</h5>
                   <p class="card-text">{{ book[0].author }}</p>
+                  {% for genre in book[0].genres %}
+                    <span class="badge badge-info">{{ genre }}</span>
+                  {% endfor %}
+                  <hr>
                   <a class="card-text" href="../{{ book[0].book_path.replace(' ', '%20') }}">Читать</a>
                 </div>
               </div>
@@ -69,6 +73,10 @@
                 <div class="card-body">
                   <h5 class="card-title">{{ book[1].title }}</h5>
                   <p class="card-text">{{ book[1].author }}</p>
+                  {% for genre in book[1].genres %}
+                    <span class="badge badge-info">{{ genre }}</span>
+                  {% endfor %}
+                  <hr>
                   <a class="card-text" href="../{{ book[1].book_path.replace(' ', '%20') }}">Читать</a>
                 </div>
               </div>
