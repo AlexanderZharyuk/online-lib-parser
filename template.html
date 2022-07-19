@@ -60,7 +60,7 @@
                     <span class="badge badge-info">{{ genre }}</span>
                   {% endfor %}
                   <hr>
-                  <a class="card-text" href="../{{ book[0].book_path.replace(' ', '%20') }}" target="_blank">Читать</a>
+                  <a class="card-text" href="../{{ book[0].book_path | urlencode }}" target="_blank">Читать</a>
                 </div>
               </div>
             </div>
@@ -78,7 +78,7 @@
                     <span class="badge badge-info">{{ genre }}</span>
                   {% endfor %}
                   <hr>
-                  <a class="card-text" href="../{{ book[1].book_path.replace(' ', '%20') }}" target="_blank">Читать</a>
+                  <a class="card-text" href="../{{ book[1].book_path | urlencode }}" target="_blank">Читать</a>
                 </div>
               </div>
             </div>
