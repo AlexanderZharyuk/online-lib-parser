@@ -32,36 +32,20 @@ def get_books_from_json() -> dict:
 
 def on_reload() -> None:
     template = get_template(filename='template.html')
-    books = list(chunked(get_books_from_json(), 2))
     os.makedirs('pages', exist_ok=True)
 
-    max_row_with_books = 5
-    books_per_page = max_row_with_books * 2
-    all_books_count = len(books) * 2
-    total_pages = math.ceil(all_books_count / books_per_page)
+    max_row_with_books_on_page = 5
+    columns_with_books_on_page = 2
 
-    page = 1
-    books_on_page = []
-    for row_number, books in enumerate(books):
-        if row_number >= max_row_with_books and \
-                row_number % max_row_with_books == 0:
-            rendered_page = template.render(
-                books=books_on_page,
-                total_pages=total_pages,
-                page=page
-            )
+    books_count_on_page = max_row_with_books_on_page * columns_with_books_on_page
+    books = list(chunked(get_books_from_json(), columns_with_books_on_page))
+    all_books_count = len(books) * columns_with_books_on_page
+    total_pages = math.ceil(all_books_count / books_count_on_page)
+    splited_books_by_pages = list(chunked(books, max_row_with_books_on_page))
 
-            index_file = f'pages/index{page}.html'
-            with open(index_file, 'w', encoding="utf8") as file:
-                file.write(rendered_page)
-
-            page += 1
-            books_on_page = []
-        books_on_page.append(books)
-
-    if books_on_page:
+    for page, books_on_row in enumerate(splited_books_by_pages, start=1):
         rendered_page = template.render(
-            books=books_on_page,
+            books=books_on_row,
             total_pages=total_pages,
             page=page
         )
