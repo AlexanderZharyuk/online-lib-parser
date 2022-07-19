@@ -7,10 +7,10 @@ from livereload import Server
 from more_itertools import chunked
 
 
-def find_json_file(file: str, path: str) -> str:
+def find_json_file(filename: str, path: str) -> str:
     for root, dirs, files in os.walk(path):
-        if file in files:
-            return os.path.join(root, file)
+        if filename in files:
+            return os.path.join(root, filename)
 
 
 def get_template(filename: str):
@@ -22,9 +22,9 @@ def get_template(filename: str):
 
 
 def get_books_from_json() -> dict:
-    books_data = find_json_file(file='books_data.json', path='.')
+    json_filepath = find_json_file(filename='books_data.json', path='.')
 
-    with open(books_data, 'r') as json_file:
+    with open(json_filepath, 'r') as json_file:
         books = json.load(json_file)
 
     return books
