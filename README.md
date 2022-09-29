@@ -1,87 +1,83 @@
 # LIBRARY PARSER
 
-Парсер, который позволяет получить информацию о книгах с сайта [tutulu](https://tululu.org/). А также вывести эту информацию на свой сайт.
+A web-scraping parser that allows you to get information about books from the site [tutulu](https://tululu.org/). And also display this information on your website.
 
-Пример сайта: [https://alexanderzharyuk.github.io/](https://alexanderzharyuk.github.io/online-lib-parser/pages/index1.html)
+Site example: [https://alexanderzharyuk.github.io/](https://alexanderzharyuk.github.io/online-lib-parser/pages/index1.html)
 
-## Предустановка
+## Setting up your development environment
 
-Все используемые библиотеки указаны в файле `requirements.txt`
-Для установки библиотек в виртуальное окружение используйте команды:
+All libraries used are specified in the `requirements.txt` file
+To install libraries in a virtual environment, use the commands:
 
 ```
 pip install -r requirements.txt
 ```
 
-### Если вы хотите запустить сайт локально
-Для запуска сайта локально напишите команду:
+### If you want to run the site locally
+To run the site locally, write the command:
 
 ```shell
 python3 render_website.py
 ```
-После чего запустится сервер по адресу `http://127.0.0.1:5500/`, далее переходите по ссылке [http://127.0.0.1:5500/pages/index1.html](http://127.0.0.1:5500/pages/index1.html).
+After that, the server will start at `http://127.0.0.1:5500/`, then follow the link [http://127.0.0.1:5500/pages/index1.html](http://127.0.0.1:5500 /pages/index1.html).
 
-### Если вы хотите собрать свою базу с книгами
-Для создания json-файла с данными используйте следующие файлы:
+### If you want to build your base with books
+To create a json file with data, use the following commands:
 
 * **parse_books_by_id.py**
 
-Данный скрипт качает книги с абсолютно любой категорией, подбирая `id-книги`. 
-У этого скрипта два аргумента, которые вы можете использовать при запуске:
-``` 
-start_id - Передайте здесь id-книги, с которой желаете начать поиск | DEFAULT=1
-end_id - Передайте здесь id-книги, на которой желаете закончить поиск | DEFAULT=10
+This script downloads books with absolutely any category, selecting `id-books`.
+This script has two arguments that you can use when running:
 ```
-Если аргументы не будут указаны, то скрипт возьмет значения по умолчанию.
+start_id - Pass here the id of the book you want to start the search with | DEFAULT=1
+end_id - Pass here the id of the book you want to end the search on | DEFAULT=10
+```
+If no arguments are specified, the script will take the default values.
 
-Для старта скрипта напишите в консоле, находясь в директории с файлом:
+To start the script, write in the console, being in the directory with the file:
 ```
 python3 parse_books_by_id.py
 ```
 
-Пример выполнения скрипта:
+Example of script execution:
 ```
 python3 parse_books_by_id.py --start_id=20 --end_id=30
 ```
 
 * **parse_tululu_category.py**
 
-Данный скрипт качает книги из категории "Научная фантастика". 
-У этого скрипта несколько аргументов, которые вы можете использовать при запуске:
-``` 
-start_page - Укажите с какой страницы начать парсинг | DEFAULT=1
-end_page - Укажите на какой странице закончить парсинг | DEFAULT=Последняя страница
-dest_folder - Папка, куда сохранится результат парсинга | DEFAULT=parse_results/
-skip_imgs - Укажите этот флаг, если не хотите скачивать фото книги | DEFAULT=False
-skip_txts - Укажите этот флаг, если не хотите скачивать текст книги | DEFAULT=False
-json_path - Можете указать свой путь до .json-файла, где будет информация о книгах.| DEFAULT=parse_results/books_data.json
+This script downloads books from the "Science Fiction" category.
+This script has several arguments that you can use when running:
 ```
-Если аргументы не будут указаны, то скрипт возьмет значения по умолчанию.
+start_page - Specify which page to start parsing from | DEFAULT=1
+end_page - Specify on which page to end parsing | DEFAULT=Last page
+dest_folder - Folder where the parsing result will be saved | DEFAULT=parse_results/
+skip_imgs - Specify this flag if you don't want to download photo books | DEFAULT=False
+skip_txts - Specify this flag if you don't want to download book text | DEFAULT=False
+json_path - You can specify your path to the .json file where the information about the books will be.| DEFAULT=parse_results/books_data.json
+```
+If no arguments are specified, the script will take the default values.
 
-Для старта скрипта напишите в консоле, находясь в директории с файлом:
+To start the script, write in the console, being in the directory with the file:
 ```
 python3 parse_tululu_category.py
 ```
 
-Примеры выполнения скрипта:
+Examples of script execution:
 ```
 python3 parse_tululu_category.py --start_page=700
 python3 parse_tululu_category.py --start_page=650 --end_page 700 --dest_folder results --skip_imgs
 python3 parse_tululu_category.py --end_page 10 --skip_txts --json_path json_files/json_data.json
 ```
 
-После заполнения данных - запускаете локальный сервер командой:
+After filling in the data, start the local server with the command:
 
 ```shell
 python3 render_website.py
 ```
 
-Если вы хотите поменять что-либо в верстке сайта - используйте файл `template.html`.
+If you want to change something in the layout of the site, use the `template.html` file.
 
-## Создано при помощи
-
-* [DEVMAN](https://dvmn.org/) - Обучающая платформа
-
-## Авторы
+## The author
 
 * [Alexander Zharyuk](https://gist.github.com/AlexanderZharyuk)
